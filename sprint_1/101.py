@@ -113,3 +113,35 @@ def resolution() -> tuple:
     première_équation_encodée['première_équation'] = (première_équation_encodée_membre_gauche, première_équation_encodée_membre_droite)
     
     return première_équation_encodée
+
+
+
+def normalisation_min_max(X):
+    
+    '''
+    Cette fonction applique une normalisation Min-Max à une matrice à deux dimensions. 
+    Paramètre: matrice de forme NumPy array. 
+    Variable de sortie: la matrice normalisée avec une normalisation Min-Max. 
+    '''
+    
+    transposée_X = X.T
+    dictionnaire_amplitude = {}
+    for indice, colonne in enumerate(transposée_X):
+        minimum_X = min(colonne)
+        maximum_X = max(colonne)
+        dictionnaire_amplitude[indice] = minimum_X, maximum_X, maximum_X - minimum_X
+        
+        transposée_X[indice,:] = (transposée_X[indice,:] - dictionnaire_amplitude[indice][0]) / dictionnaire_amplitude[indice][2]
+ 
+    return transposée_X.T
+
+
+def mean_squared_error(X, beta, y):
+    
+    y_chapeau = np.dot(X, beta)
+    
+    mse = (y_chapeau - y)**2
+    
+    mse = mse.mean()
+    
+    return mse
