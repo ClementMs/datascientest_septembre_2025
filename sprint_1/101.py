@@ -1,6 +1,6 @@
 # trier par ordre croissant une liste
 import numpy as np
-
+import pandas as pd
 def trier_ordre_croissant_liste(une_liste):
     
     liste_deux = []
@@ -145,3 +145,80 @@ def mean_squared_error(X, beta, y):
     mse = mse.mean()
     
     return mse
+
+class transactions_boutiques():
+    
+    '''
+    Cette classe permet de calculer des statistiques sur des données de transactions. 
+    '''
+    
+    
+    def __init__(self, nombre_achats: int, montant_total_dépensé: int, données: pd.DataFrame, nom_colonne_quantité: str, nom_colonne_montant_transaction: str):
+        
+        self.nombre_achats = 0
+        self.montant_total_dépensé = 0
+        self.nom_colonne_quantité = 'total_amt'
+        self.nom_colonne_montant_transaction = 'Qty'
+        self.données = pd.DataFrame({'a': [0,1], 'b': [0,1]})
+        self.filtre_montant_positif = False
+        
+    def statistiques_transactions(self, données: pd.DataFrame, nom_colonne_quantité : str, nom_colonne_montant_transaction: str, nombre_achats: int, montant_total_dépensé: int, filtre_montant_positif) -> tuple:
+        '''
+        Cette fonction calcule le montant moyen dépensé et la quantité maximale achetée en utilisant un DataFrame transactions.
+        ----------
+        Paramètres:
+        transactions: un DataFrame contenant les informations sur des transactions.
+        nom_colonne_quantité: le nom de la colonne représentant le nombre de quantités achetées. 
+        nom_colonne_montant_transaction: le nom de la colonne représentant le montant total de la transaction. 
+        nombre_achats: le nombre d'achats fixé avant de sommer les transactions du set de données.
+        montant_total_dépensé: le montant total dépensé avant de sommer le montant des transactions du set de données. 
+        ----------
+        Variable de sortie: un tuple de format (montant_total_moyen_dépensé, quantité_maximale_achetée)
+        '''
+        self.filtre_montant_positif = filtre_montant_positif
+        self.données = données
+        self.nom_colonne_quantité = nom_colonne_quantité
+        self.nom_colonne_montant_transaction = nom_colonne_montant_transaction
+        self.nombre_achats = nombre_achats
+        self.montant_total_dépensé = montant_total_dépensé
+                
+        for montant, quantité in zip(list(self.données[self.nom_colonne_montant_transaction]), list(self.données[self.nom_colonne_quantité])):
+            if self.filtre_montant_positif == False:
+                
+                self.montant_total_dépensé = self.montant_total_dépensé + montant if str(montant) != 'nan' else self.montant_total_dépensé
+                self.nombre_achats = self.nombre_achats + 1 if str(montant) != 'nan' else self.nombre_achats
+    
+                if self.nombre_achats == 1:
+        
+                    quantité_maximale_achetée = quantité
+        
+                else:
+        
+                    if quantité > quantité_maximale_achetée:
+            
+                        quantité_maximale_achetée = quantité
+                
+            else:
+                
+                if montant > 0 and str(montant) != 'nan':
+                    
+                    self.montant_total_dépensé = self.montant_total_dépensé + montant
+                    self.nombre_achats = self.nombre_achats + 1
+                    
+                    if self.nombre_achats == 1:
+        
+                        quantité_maximale_achetée = quantité
+        
+                    else:
+        
+                        if quantité > quantité_maximale_achetée:
+            
+                            quantité_maximale_achetée = quantité
+                
+                
+                
+        montant_total_moyen_dépensé = self.montant_total_dépensé / self.nombre_achats
+        
+        return (self.montant_total_dépensé, montant_total_moyen_dépensé, quantité_maximale_achetée, self.nombre_achats)
+
+    
